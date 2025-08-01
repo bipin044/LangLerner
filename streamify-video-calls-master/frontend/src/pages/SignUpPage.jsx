@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { ShipWheelIcon } from "lucide-react";
 import { Link } from "react-router";
-
+import {
+  GlobeIcon, UsersIcon, MessageCircleIcon, VideoIcon,
+  BookOpenIcon, TargetIcon, AwardIcon, StarIcon
+} from "lucide-react";
+import LinguaLinkLogo from "../components/LinguaLinkLogo";
 import useSignUp from "../hooks/useSignUp";
 
 const SignUpPage = () => {
@@ -11,18 +14,6 @@ const SignUpPage = () => {
     password: "",
   });
 
-  // This is how we did it at first, without using our custom hook
-  // const queryClient = useQueryClient();
-  // const {
-  //   mutate: signupMutation,
-  //   isPending,
-  //   error,
-  // } = useMutation({
-  //   mutationFn: signup,
-  //   onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-  // });
-
-  // This is how we did it using our custom hook - optimized version
   const { isPending, error, signupMutation } = useSignUp();
 
   const handleSignup = (e) => {
@@ -30,135 +21,167 @@ const SignUpPage = () => {
     signupMutation(signupData);
   };
 
+  const features = [
+    {
+      icon: GlobeIcon,
+      title: "Global Language Exchange",
+      description: "Connect with native speakers from around the world"
+    },
+    {
+      icon: MessageCircleIcon,
+      title: "Real-time Chat",
+      description: "Practice languages through instant messaging"
+    },
+    {
+      icon: VideoIcon,
+      title: "Video Calls",
+      description: "Face-to-face conversations for authentic learning"
+    },
+    {
+      icon: BookOpenIcon,
+      title: "Structured Learning",
+      description: "Organized lessons and progress tracking"
+    }
+  ];
+
   return (
-    <div
-      className="h-screen flex items-center justify-center p-4 sm:p-6 md:p-8"
-      data-theme="forest"
-    >
-      <div className="border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden">
-        {/* SIGNUP FORM - LEFT SIDE */}
-        <div className="w-full lg:w-1/2 p-4 sm:p-8 flex flex-col">
-          {/* LOGO */}
-          <div className="mb-4 flex items-center justify-start gap-2">
-            <ShipWheelIcon className="size-9 text-primary" />
-            <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
-              Streamify
-            </span>
-          </div>
-
-          {/* ERROR MESSAGE IF ANY */}
-          {error && (
-            <div className="alert alert-error mb-4">
-              <span>{error.response.data.message}</span>
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-8 items-center">
+          {/* Left Side - Signup Form */}
+          <div className="bg-white rounded-3xl shadow-2xl p-8 lg:p-12">
+            {/* Logo and Header */}
+            <div className="text-center mb-8">
+              <LinguaLinkLogo size="large" className="justify-center mb-4" />
+              <h1 className="text-3xl font-heading font-bold text-neutral-800 mb-2">Join LinguaLink</h1>
+              <p className="text-neutral-600 font-body">Start your language learning journey today</p>
             </div>
-          )}
 
-          <div className="w-full">
-            <form onSubmit={handleSignup}>
-              <div className="space-y-4">
-                <div>
-                  <h2 className="text-xl font-semibold">Create an Account</h2>
-                  <p className="text-sm opacity-70">
-                    Join Streamify and start your language learning adventure!
-                  </p>
-                </div>
+            {/* Error Message */}
+            {error && (
+              <div className="alert alert-error mb-6">
+                <span className="font-body">{error.response?.data?.message || error.message}</span>
+              </div>
+            )}
 
-                <div className="space-y-3">
-                  {/* FULLNAME */}
-                  <div className="form-control w-full">
-                    <label className="label">
-                      <span className="label-text">Full Name</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="John Doe"
-                      className="input input-bordered w-full"
-                      value={signupData.fullName}
-                      onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value })}
-                      required
-                    />
+            {/* Signup Form */}
+            <form onSubmit={handleSignup} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">Full Name</label>
+                <input
+                  type="text"
+                  placeholder="John Doe"
+                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 font-body"
+                  value={signupData.fullName}
+                  onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">Email</label>
+                <input
+                  type="email"
+                  placeholder="john@example.com"
+                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 font-body"
+                  value={signupData.email}
+                  onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">Password</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 font-body"
+                  value={signupData.password}
+                  onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                  required
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                className="w-full btn-lingualink font-accent text-lg py-4" 
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Creating Account...
                   </div>
-                  {/* EMAIL */}
-                  <div className="form-control w-full">
-                    <label className="label">
-                      <span className="label-text">Email</span>
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="john@gmail.com"
-                      className="input input-bordered w-full"
-                      value={signupData.email}
-                      onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
-                      required
-                    />
-                  </div>
-                  {/* PASSWORD */}
-                  <div className="form-control w-full">
-                    <label className="label">
-                      <span className="label-text">Password</span>
-                    </label>
-                    <input
-                      type="password"
-                      placeholder="********"
-                      className="input input-bordered w-full"
-                      value={signupData.password}
-                      onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                      required
-                    />
-                    <p className="text-xs opacity-70 mt-1">
-                      Password must be at least 6 characters long
-                    </p>
-                  </div>
+                ) : (
+                  "Create Account"
+                )}
+              </button>
 
-                  <div className="form-control">
-                    <label className="label cursor-pointer justify-start gap-2">
-                      <input type="checkbox" className="checkbox checkbox-sm" required />
-                      <span className="text-xs leading-tight">
-                        I agree to the{" "}
-                        <span className="text-primary hover:underline">terms of service</span> and{" "}
-                        <span className="text-primary hover:underline">privacy policy</span>
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                <button className="btn btn-primary w-full" type="submit">
-                  {isPending ? (
-                    <>
-                      <span className="loading loading-spinner loading-xs"></span>
-                      Loading...
-                    </>
-                  ) : (
-                    "Create Account"
-                  )}
-                </button>
-
-                <div className="text-center mt-4">
-                  <p className="text-sm">
-                    Already have an account?{" "}
-                    <Link to="/login" className="text-primary hover:underline">
-                      Sign in
-                    </Link>
-                  </p>
-                </div>
+              <div className="text-center">
+                <p className="text-neutral-600 font-body">
+                  Already have an account?{" "}
+                  <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium hover:underline transition-colors">
+                    Sign in
+                  </Link>
+                </p>
               </div>
             </form>
           </div>
-        </div>
 
-        {/* SIGNUP FORM - RIGHT SIDE */}
-        <div className="hidden lg:flex w-full lg:w-1/2 bg-primary/10 items-center justify-center">
-          <div className="max-w-md p-8">
-            {/* Illustration */}
-            <div className="relative aspect-square max-w-sm mx-auto">
-              <img src="/i.png" alt="Language connection illustration" className="w-full h-full" />
-            </div>
+          {/* Right Side - Features & Illustration */}
+          <div className="hidden lg:block">
+            <div className="relative">
+              {/* Floating Elements */}
+              <div className="absolute top-10 left-10 w-20 h-20 bg-primary-200 rounded-full opacity-20 floating-animation"></div>
+              <div className="absolute bottom-20 right-10 w-16 h-16 bg-secondary-200 rounded-full opacity-20 floating-animation" style={{ animationDelay: '2s' }}></div>
+              <div className="absolute top-1/2 left-5 w-12 h-12 bg-accent-200 rounded-full opacity-20 floating-animation" style={{ animationDelay: '4s' }}></div>
 
-            <div className="text-center space-y-3 mt-6">
-              <h2 className="text-xl font-semibold">Connect with language partners worldwide</h2>
-              <p className="opacity-70">
-                Practice conversations, make friends, and improve your language skills together
-              </p>
+              <div className="relative z-10 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl">
+                <div className="text-center mb-8">
+                  <h2 className="text-2xl font-heading font-bold text-neutral-800 mb-4">Where Languages Connect, Cultures Unite</h2>
+                  <p className="text-neutral-600 font-body">Join millions of learners worldwide in the most authentic way to master languages</p>
+                </div>
+
+                {/* Features */}
+                <div className="space-y-6">
+                  {features.map((feature, index) => {
+                    const Icon = feature.icon;
+                    return (
+                      <div key={index} className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center">
+                          <Icon className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-heading font-semibold text-neutral-800 mb-1 line-clamp-1">
+                            {feature.title}
+                          </h3>
+                          <p className="text-sm text-neutral-600 font-body line-clamp-2">
+                            {feature.description}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Stats */}
+                <div className="mt-8 pt-8 border-t border-neutral-200">
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <div className="text-2xl font-heading font-bold text-primary-600">10K+</div>
+                      <div className="text-xs text-neutral-500 font-body">Active Learners</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-heading font-bold text-secondary-600">50+</div>
+                      <div className="text-xs text-neutral-500 font-body">Languages</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-heading font-bold text-accent-600">24/7</div>
+                      <div className="text-xs text-neutral-500 font-body">Support</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

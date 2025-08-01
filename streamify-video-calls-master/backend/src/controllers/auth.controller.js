@@ -5,28 +5,36 @@ import jwt from "jsonwebtoken";
 export async function signup(req, res) {
   const { email, password, fullName } = req.body;
 
+  console.log("Signup request received:", { email, fullName, hasPassword: !!password });
+
   try {
     if (!email || !password || !fullName) {
+      console.log("Missing required fields:", { email: !!email, password: !!password, fullName: !!fullName });
       return res.status(400).json({ message: "All fields are required" });
     }
 
     if (password.length < 6) {
+      console.log("Password too short:", password.length);
       return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
+      console.log("Invalid email format:", email);
       return res.status(400).json({ message: "Invalid email format" });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+      console.log("Email already exists:", email);
       return res.status(400).json({ message: "Email already exists, please use a diffrent one" });
     }
 
     const idx = Math.floor(Math.random() * 100) + 1; // generate a num between 1-100
     const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
+
+    console.log("Creating new user with data:", { email, fullName, hasPassword: !!password });
 
     const newUser = await User.create({
       email,
@@ -34,6 +42,8 @@ export async function signup(req, res) {
       password,
       profilePic: randomAvatar,
     });
+
+    console.log("User created successfully:", newUser._id);
 
     try {
       await upsertStreamUser({
@@ -46,9 +56,16 @@ export async function signup(req, res) {
       console.log("Error creating Stream user:", error);
     }
 
+    if (!process.env.JWT_SECRET_KEY) {
+      console.error("JWT_SECRET_KEY is not set!");
+      return res.status(500).json({ message: "Server configuration error" });
+    }
+
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "7d",
     });
+
+    console.log("JWT token created successfully");
 
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -56,6 +73,8 @@ export async function signup(req, res) {
       sameSite: "strict", // prevent CSRF attacks
       secure: process.env.NODE_ENV === "production",
     });
+
+    console.log("Cookie set successfully");
 
     res.status(201).json({ success: true, user: newUser });
   } catch (error) {
