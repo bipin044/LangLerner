@@ -74,3 +74,12 @@ export async function getStreamToken() {
   const response = await axiosInstance.get("/chat/token");
   return response.data;
 }
+
+export async function markAcceptedRequestAsRead(notificationId) {
+  const res = await fetch(`/api/notifications/accepted/${notificationId}/read`, {
+    method: "POST",
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to mark as read");
+  return res.json();
+}

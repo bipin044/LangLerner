@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { acceptFriendRequest, getFriendRequests } from "../lib/api";
+import { acceptFriendRequest, getFriendRequests, markAcceptedRequestAsRead } from "../lib/api";
 import { BellIcon, ClockIcon, MessageSquareIcon, UserCheckIcon } from "lucide-react";
 import NoNotificationsFound from "../components/NoNotificationsFound";
 
@@ -16,6 +16,13 @@ const NotificationsPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
       queryClient.invalidateQueries({ queryKey: ["friends"] });
+    },
+  });
+
+  const { mutate: markAsReadMutation } = useMutation({
+    mutationFn: markAcceptedRequestAsRead,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
     },
   });
 
@@ -114,6 +121,12 @@ const NotificationsPage = () => {
                             <MessageSquareIcon className="h-3 w-3 mr-1" />
                             New Friend
                           </div>
+                          <button
+                            className="btn btn-xs btn-outline ml-2"
+                            onClick={() => markAsReadMutation(notification._id)}
+                          >
+                            Mark as Read
+                          </button>
                         </div>
                       </div>
                     </div>

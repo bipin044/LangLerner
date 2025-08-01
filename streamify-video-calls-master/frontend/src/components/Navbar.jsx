@@ -4,6 +4,8 @@ import { BellIcon, LogOutIcon } from "lucide-react";
 import ThemeSelector from "./ThemeSelector";
 import useLogout from "../hooks/useLogout";
 import LinguaLinkLogo from "./LinguaLinkLogo";
+import { useQuery } from "@tanstack/react-query";
+import { getFriendRequests } from "../lib/api";
 
 const Navbar = () => {
   const { authUser } = useAuthUser();
@@ -11,6 +13,15 @@ const Navbar = () => {
   const isChatPage = location.pathname?.startsWith("/chat");
 
   const { logoutMutation } = useLogout();
+
+  const { data: friendRequests } = useQuery({
+    queryKey: ["friendRequests"],
+    queryFn: getFriendRequests,
+  });
+
+  const incomingRequests = friendRequests?.incomingReqs || [];
+  const acceptedRequests = friendRequests?.acceptedReqs || [];
+  const notificationCount = incomingRequests.length + acceptedRequests.length;
 
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-neutral-200 sticky top-0 z-30 h-16 flex items-center">
@@ -26,9 +37,14 @@ const Navbar = () => {
           )}
 
           <div className="flex items-center gap-2 sm:gap-3 ml-auto">
-            <Link to={"/notifications"}>
+            <Link to={"/notifications"} className="relative">
               <button className="btn btn-ghost btn-circle hover:bg-neutral-100 transition-colors p-2">
                 <BellIcon className="h-5 w-5 text-neutral-600" />
+                {notificationCount > 0 && (
+                  <span className="badge badge-primary absolute -top-1 -right-1 text-xs">
+                    {notificationCount}
+                  </span>
+                )}
               </button>
             </Link>
 
