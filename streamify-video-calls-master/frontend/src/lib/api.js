@@ -10,8 +10,16 @@ export const login = async (loginData) => {
   return response.data;
 };
 export const logout = async () => {
-  const response = await axiosInstance.post("/auth/logout");
-  return response.data;
+  try {
+    const response = await axiosInstance.post("/auth/logout");
+    // Clear token from localStorage
+    localStorage.removeItem('authToken');
+    return response.data;
+  } catch (error) {
+    // Even if the API call fails, clear the token locally
+    localStorage.removeItem('authToken');
+    return { success: true, message: "Logged out successfully" };
+  }
 };
 
 export const getAuthUser = async () => {
@@ -19,7 +27,10 @@ export const getAuthUser = async () => {
     const res = await axiosInstance.get("/auth/me");
     return res.data;
   } catch (error) {
-    console.log("Error in getAuthUser:", error);
+    // Don't log 401 errors as they're expected when not logged in
+    if (error.response?.status !== 401) {
+      console.log("Error in getAuthUser:", error);
+    }
     return null;
   }
 };

@@ -6,6 +6,7 @@ const useAuthUser = () => {
     queryKey: ["authUser"],
     queryFn: getAuthUser,
     retry: false, // auth check
+    enabled: !!localStorage.getItem('authToken'), // Only run if token exists
   });
 
   return { isLoading: authUser.isLoading, authUser: authUser.data?.user };
