@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "lingualink",
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "frontend/dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/index.html"
+    }
+  ],
+  "env": {
+    "VITE_STREAM_API_KEY": "@vite_stream_api_key"
+  },
+  "functions": {
+    "frontend/dist/**/*.js": {
+      "maxDuration": 30
+    }
+  }
+} 

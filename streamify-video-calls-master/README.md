@@ -72,6 +72,47 @@ npm install
 npm run dev
 ```
 
+## 🚀 Deployment
+
+### Deploy to Vercel (Recommended)
+
+1. **Install Vercel CLI:**
+   ```bash
+   npm i -g vercel
+   ```
+
+2. **Login to Vercel:**
+   ```bash
+   vercel login
+   ```
+
+3. **Deploy from project root:**
+   ```bash
+   vercel
+   ```
+
+4. **Set Environment Variables:**
+   - Go to your Vercel dashboard
+   - Navigate to Settings > Environment Variables
+   - Add `VITE_STREAM_API_KEY` with your Stream API key
+
+5. **Configure Build Settings:**
+   - Build Command: `cd frontend && npm run build`
+   - Output Directory: `frontend/dist`
+   - Install Command: `cd frontend && npm install`
+
+### Alternative: Deploy to Netlify
+
+1. **Build the project:**
+   ```bash
+   cd frontend
+   npm run build
+   ```
+
+2. **Drag and drop the `dist` folder to Netlify**
+
+3. **Set environment variables in Netlify dashboard**
+
 ## 🌟 What Makes LinguaLink Special
 
 - **Cultural Intelligence** - Built-in cultural context and sensitivity
