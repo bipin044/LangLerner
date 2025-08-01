@@ -55,6 +55,21 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "LinguaLink Backend is running!" });
 });
 
+// Debug endpoint to check environment variables
+app.get("/api/debug", (req, res) => {
+  res.json({ 
+    status: "Debug Info",
+    env: {
+      NODE_ENV: process.env.NODE_ENV,
+      PORT: process.env.PORT,
+      hasMongoUri: !!process.env.MONGO_URI,
+      hasJwtSecret: !!process.env.JWT_SECRET_KEY,
+      hasStreamKey: !!process.env.STEAM_API_KEY,
+      hasStreamSecret: !!process.env.STEAM_API_SECRET
+    }
+  });
+});
+
 if (process.env.NODE_ENV === "production") {
   // Only serve static files if they exist
   const staticPath = path.join(__dirname, "../frontend/dist");
