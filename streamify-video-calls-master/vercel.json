@@ -15,8 +15,5 @@
       "src": "/(.*)",
       "dest": "/frontend/index.html"
     }
-  ],
-  "env": {
-    "VITE_STREAM_API_KEY": "@vite_stream_api_key"
-  }
+  ]
 } 
