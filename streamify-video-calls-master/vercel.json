@@ -18,10 +18,5 @@
   ],
   "env": {
     "VITE_STREAM_API_KEY": "@vite_stream_api_key"
-  },
-  "functions": {
-    "frontend/dist/**/*.js": {
-      "maxDuration": 30
-    }
   }
 } 
