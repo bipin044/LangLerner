@@ -67,16 +67,12 @@ export async function signup(req, res) {
 
     console.log("JWT token created successfully");
 
-    res.cookie("jwt", token, {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true, // prevent XSS attacks,
-      sameSite: "strict", // prevent CSRF attacks
-      secure: process.env.NODE_ENV === "production",
+    // For cross-domain compatibility, return token in response body
+    res.status(201).json({ 
+      success: true, 
+      user: newUser,
+      token: token // Include token in response
     });
-
-    console.log("Cookie set successfully");
-
-    res.status(201).json({ success: true, user: newUser });
   } catch (error) {
     console.log("Error in signup controller", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -101,14 +97,12 @@ export async function login(req, res) {
       expiresIn: "7d",
     });
 
-    res.cookie("jwt", token, {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true, // prevent XSS attacks,
-      sameSite: "strict", // prevent CSRF attacks
-      secure: process.env.NODE_ENV === "production",
+    // For cross-domain compatibility, return token in response body
+    res.status(200).json({ 
+      success: true, 
+      user,
+      token: token // Include token in response
     });
-
-    res.status(200).json({ success: true, user });
   } catch (error) {
     console.log("Error in login controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });
