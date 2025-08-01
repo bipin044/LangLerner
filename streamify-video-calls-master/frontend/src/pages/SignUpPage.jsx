@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   GlobeIcon, UsersIcon, MessageCircleIcon, VideoIcon,
   BookOpenIcon, TargetIcon, AwardIcon, StarIcon
@@ -8,6 +8,7 @@ import LinguaLinkLogo from "../components/LinguaLinkLogo";
 import useSignUp from "../hooks/useSignUp";
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
   const [signupData, setSignupData] = useState({
     fullName: "",
     email: "",
@@ -18,7 +19,16 @@ const SignUpPage = () => {
 
   const handleSignup = (e) => {
     e.preventDefault();
-    signupMutation(signupData);
+    signupMutation(signupData, {
+      onSuccess: (data) => {
+        console.log("Signup successful:", data);
+        // Redirect to onboarding or home page
+        navigate("/onboarding");
+      },
+      onError: (error) => {
+        console.error("Signup failed:", error);
+      }
+    });
   };
 
   const features = [

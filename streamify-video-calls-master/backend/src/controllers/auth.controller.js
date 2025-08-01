@@ -82,16 +82,27 @@ export async function signup(req, res) {
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
+    
+    console.log("Login request received:", { email, hasPassword: !!password });
 
     if (!email || !password) {
+      console.log("Missing required fields:", { email: !!email, password: !!password });
       return res.status(400).json({ message: "All fields are required" });
     }
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ message: "Invalid email or password" });
+    if (!user) {
+      console.log("User not found:", email);
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
     const isPasswordCorrect = await user.matchPassword(password);
-    if (!isPasswordCorrect) return res.status(401).json({ message: "Invalid email or password" });
+    if (!isPasswordCorrect) {
+      console.log("Invalid password for user:", email);
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    console.log("Login successful for user:", email);
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "7d",
