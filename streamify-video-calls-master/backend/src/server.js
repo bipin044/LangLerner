@@ -20,7 +20,9 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://lingualink.vercel.app",
   "https://lingualink-frontend.vercel.app",
-  "https://lingualink-backend.onrender.com"
+  "https://lingualink-backend.onrender.com",
+  /^https:\/\/.*\.vercel\.app$/, // Allow any Vercel subdomain
+  /^https:\/\/.*\.onrender\.com$/ // Allow any Render subdomain
 ];
 
 app.use(
@@ -29,9 +31,20 @@ app.use(
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
       
-      if (allowedOrigins.indexOf(origin) !== -1) {
+      // Check if origin matches any allowed pattern
+      const isAllowed = allowedOrigins.some(allowed => {
+        if (typeof allowed === 'string') {
+          return allowed === origin;
+        } else if (allowed instanceof RegExp) {
+          return allowed.test(origin);
+        }
+        return false;
+      });
+      
+      if (isAllowed) {
         callback(null, true);
       } else {
+        console.log('CORS blocked origin:', origin);
         callback(new Error('Not allowed by CORS'));
       }
     },
