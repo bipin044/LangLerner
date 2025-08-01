@@ -16,33 +16,20 @@ const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
 // CORS configuration for production
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://lingualink.vercel.app",
-  "https://lingualink-frontend.vercel.app",
-  "https://lingualink-backend-nohq.onrender.com",
-  "https://lang-lerner-fb4y.vercel.app",
-  /^https:\/\/.*\.vercel\.app$/, // Allow any Vercel subdomain
-  /^https:\/\/.*\.onrender\.com$/ // Allow any Render subdomain
-];
-
 app.use(
   cors({
     origin: function (origin, callback) {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
       
-      // Check if origin matches any allowed pattern
-      const isAllowed = allowedOrigins.some(allowed => {
-        if (typeof allowed === 'string') {
-          return allowed === origin;
-        } else if (allowed instanceof RegExp) {
-          return allowed.test(origin);
-        }
-        return false;
-      });
+      // Specific allowed origins
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://lang-lerner-fb4y.vercel.app",
+        "https://lingualink-backend-nohq.onrender.com"
+      ];
       
-      if (isAllowed) {
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         console.log('CORS blocked origin:', origin);
@@ -50,6 +37,8 @@ app.use(
       }
     },
     credentials: true, // allow frontend to send cookies
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
   })
 );
 
