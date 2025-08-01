@@ -3,6 +3,7 @@ import "dotenv/config";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
+import { existsSync } from "fs";
 
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
@@ -57,7 +58,7 @@ app.get("/api/health", (req, res) => {
 if (process.env.NODE_ENV === "production") {
   // Only serve static files if they exist
   const staticPath = path.join(__dirname, "../frontend/dist");
-  if (require('fs').existsSync(staticPath)) {
+  if (existsSync(staticPath)) {
     app.use(express.static(staticPath));
     
     app.get("*", (req, res) => {
