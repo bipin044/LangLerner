@@ -20,7 +20,8 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://lingualink.vercel.app",
   "https://lingualink-frontend.vercel.app",
-  "https://lingualink-backend.onrender.com",
+  "https://lingualink-backend-nohq.onrender.com",
+  "https://lang-lerner-fb4y.vercel.app",
   /^https:\/\/.*\.vercel\.app$/, // Allow any Vercel subdomain
   /^https:\/\/.*\.onrender\.com$/ // Allow any Render subdomain
 ];
@@ -65,11 +66,29 @@ app.get("/api/health", (req, res) => {
 });
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-  });
+  // Only serve static files if they exist
+  const staticPath = path.join(__dirname, "../frontend/dist");
+  if (require('fs').existsSync(staticPath)) {
+    app.use(express.static(staticPath));
+    
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(staticPath, "index.html"));
+    });
+  } else {
+    // If frontend files don't exist, just serve API
+    app.get("/", (req, res) => {
+      res.json({ 
+        message: "LinguaLink Backend API", 
+        status: "running",
+        endpoints: {
+          health: "/api/health",
+          auth: "/api/auth",
+          users: "/api/users",
+          chat: "/api/chat"
+        }
+      });
+    });
+  }
 }
 
 app.listen(PORT, () => {
