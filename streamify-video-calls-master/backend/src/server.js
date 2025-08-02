@@ -8,6 +8,7 @@ import { existsSync } from "fs";
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import chatRoutes from "./routes/chat.route.js";
+import friendRoutes from "./routes/friend.route.js";
 
 import { connectDB } from "./lib/db.js";
 
@@ -26,6 +27,7 @@ app.use(
       // Specific allowed origins
       const allowedOrigins = [
         "http://localhost:5173",
+        "http://localhost:5174",
         "https://lang-lerner-fb4y.vercel.app",
         "https://lingualink-backend-nohq.onrender.com"
       ];
@@ -49,6 +51,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/friends", friendRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -89,7 +92,8 @@ if (process.env.NODE_ENV === "production") {
           health: "/api/health",
           auth: "/api/auth",
           users: "/api/users",
-          chat: "/api/chat"
+          chat: "/api/chat",
+          friends: "/api/friends"
         }
       });
     });

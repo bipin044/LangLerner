@@ -83,3 +83,12 @@ export async function markAcceptedRequestAsRead(notificationId) {
   if (!res.ok) throw new Error("Failed to mark as read");
   return res.json();
 }
+
+export async function removeFriend(friendId) {
+  const res = await fetch(`/api/friends/${friendId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to remove friend");
+  return res.json();
+}

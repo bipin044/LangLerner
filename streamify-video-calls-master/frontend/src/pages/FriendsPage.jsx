@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "react-router";
 import { 
@@ -12,7 +12,7 @@ import {
   BookOpenIcon
 } from "lucide-react";
 
-import { getUserFriends } from "../lib/api";
+import { getUserFriends, removeFriend } from "../lib/api";
 import FriendCard from "../components/FriendCard";
 import NoFriendsFound from "../components/NoFriendsFound";
 
@@ -20,9 +20,18 @@ const FriendsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("all");
 
+  const queryClient = useQueryClient();
+
   const { data: friends = [], isLoading: loadingFriends } = useQuery({
     queryKey: ["friends"],
     queryFn: getUserFriends,
+  });
+
+  const { mutate: removeFriendMutation, isPending: removingFriend } = useMutation({
+    mutationFn: removeFriend,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
+    },
   });
 
   // Filter friends based on search term and selected language
@@ -243,7 +252,17 @@ const FriendsPage = () => {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredFriends.map((friend) => (
-                  <FriendCard key={friend._id} friend={friend} />
+                  <div key={friend._id} className="relative">
+                    <FriendCard friend={friend} />
+                    <button
+                      className="btn btn-xs btn-error absolute top-2 right-2"
+                      onClick={() => removeFriendMutation(friend._id)}
+                      disabled={removingFriend}
+                      title="Remove Friend"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
@@ -254,4 +273,4 @@ const FriendsPage = () => {
   );
 };
 
-export default FriendsPage; 
+export default FriendsPage;
